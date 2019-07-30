@@ -1,0 +1,33 @@
+{
+  "variables": {
+    "install_path": "/tmp",
+    "region": "us-east-1"
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "ami_name": "CentOS-7-Jenkins {{timestamp}}",
+    "region": "{{user `region`}}",
+    "source_ami_filter": {
+      "filters": {
+        "owner-alias": "aws-marketplace",
+        "product-code": "aw0evgkw8e5c1q413zgy5pjce",
+        "virtualization-type": "hvm"
+      },
+      "owners": ["aws-marketplace"],
+      "most_recent": true
+    },
+    "instance_type": "t2.micro",
+    "ssh_username": "centos",
+    "ssh_port": 22
+  }],
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo 'packer' | sudo -S sh -c '{{ .Vars }} {{ .Path }}'",
+      "environment_vars": [ 
+        "install_path={{ user `install_path` }}"
+      ],
+      "script": "./scripts/jenkins_install.sh"
+    }
+  ]
+}
