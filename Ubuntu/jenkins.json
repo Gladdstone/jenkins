@@ -1,23 +1,27 @@
 {
   "variables": {
     "install_path": "/tmp",
-    "region": "us-east-1"
+    "region": "us-east-1",
+    "aws_access_key": "AKIAUQMH5HFXP4KTCZXB",
+    "aws_secret_key": "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"
   },
   "builders": [{
     "type": "amazon-ebs",
-    "ami_name": "CentOS-7-Jenkins {{timestamp}}",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "ami_name": "Ubuntu-16-Jenkins {{timestamp}}",
     "region": "{{user `region`}}",
     "source_ami_filter": {
       "filters": {
-        "owner-alias": "aws-marketplace",
-        "product-code": "aw0evgkw8e5c1q413zgy5pjce",
-        "virtualization-type": "hvm"
+        "virtualization-type": "hvm",
+        "name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*",
+        "root-device-type": "ebs"
       },
       "owners": ["aws-marketplace"],
       "most_recent": true
     },
     "instance_type": "t2.micro",
-    "ssh_username": "centos",
+    "ssh_username": "ubuntu",
     "ssh_port": 22
   }],
   "provisioners": [
@@ -31,3 +35,5 @@
     }
   ]
 }
+
+
