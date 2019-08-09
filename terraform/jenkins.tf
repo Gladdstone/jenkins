@@ -1,4 +1,4 @@
-data "aws_ami" "jenkins-ami" {
+data "aws_ami" "jenkins_ami" {
   name_regex  = "CentOS-7-Jenkins*"
   most_recent = true
   owners      = ["self"]
@@ -25,8 +25,8 @@ EOF
 }
 
 resource "aws_iam_policy" "jenkins" {
-  name        = "test-policy"
-  description = "A test policy"
+  name        = "jenkins-policy"
+  description = "Jenkins execution policy"
 
   policy = <<EOF
 {
@@ -54,13 +54,22 @@ resource "aws_iam_instance_profile" "jenkins-profile" {
   role = "${aws_iam_role.jenkins.name}"
 }
 
-resource "aws_instance" "jenkins" {
-    ami                  = "${data.aws_ami.jenkins-ami.id}"
-    instance_type        = "t1.micro"
-    iam_instance_profile = "${aws_iam_instance_profile.jenkins-profile.name}"
+module "jenkins" {
+  source  = "terraform-aws-modules/ec2-instance/aws"
+  version = "1.24.0"
 
-    network_interface {
-      network_interface_id = "${data.terraform_remote_state.network.jenkins_interface}"
-      device_index         = 0
-    }
+  name                   = "jenkins"
+  instance_count         = 1
+
+  ami                    = "${data.aws_ami.jenkins_ami.id}"
+  instance_type          = "t2.micro"
+  key_name               = "joefarrell"
+  monitoring             = false
+  vpc_security_group_ids = ["${aws_security_group.jenkins_sg.id}"]
+  subnet_id              = "${module.jenkins_vpc.private_subnets}"
+
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
 }

@@ -1,4 +1,9 @@
-output "jenkins_interface_id" {
-    value       = "${aws_network_interface.jenkins_interface.id}"
-    description = "ID of the Jenkins subnet interface"
+output "jenkins_private_subnets" {
+    value       = "${module.jenkins_vpc.private_subnets}"
+    description = "Jenkins VPC private subnet list"
+}
+
+output "jenkins_sg" {
+    value       = "${aws_security_group.jenkins_sg}"
+    description = "ID of Jenkins security group"
 }
