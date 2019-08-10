@@ -65,8 +65,8 @@ module "jenkins" {
   instance_type          = "t2.micro"
   key_name               = "joefarrell"
   monitoring             = false
-  vpc_security_group_ids = ["${aws_security_group.jenkins_sg.id}"]
-  subnet_id              = "${module.jenkins_vpc.private_subnets}"
+  vpc_security_group_ids = ["${jenkins_sg_id}"]
+  subnet_id              = "${jenkins_private_subnets}"
 
   tags = {
     Terraform   = "true"

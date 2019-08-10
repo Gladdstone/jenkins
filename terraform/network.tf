@@ -4,7 +4,7 @@ provider "aws" {
 
 data "aws_security_group" "jenkins_sg" {
   name   = "default"
-  vpc_id = "${module.jenkins_vpc.id}"
+  vpc_id = "${jenkins_vpc_id}"
 }
 
 module "jenkins_vpc" {
