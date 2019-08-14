@@ -1,3 +1,11 @@
+module "network" {
+  source = "./network"
+}
+
+module "sg" {
+  source = "./sg"
+}
+
 data "aws_ami" "jenkins_ami" {
   name_regex  = "CentOS-7-Jenkins*"
   most_recent = true
@@ -65,8 +73,8 @@ module "jenkins" {
   instance_type          = "t2.micro"
   key_name               = "joefarrell"
   monitoring             = false
-  vpc_security_group_ids = ["${jenkins_sg_id}"]
-  subnet_id              = "${jenkins_private_subnets}"
+  vpc_security_group_ids = ["${module.sg.jenkins_sg_id}"]
+  subnet_id              = "${module.network.jenkins_private_subnets[0]}"
 
   tags = {
     Terraform   = "true"

@@ -4,7 +4,7 @@ provider "aws" {
 
 data "aws_security_group" "jenkins_sg" {
   name   = "default"
-  vpc_id = "${jenkins_vpc_id}"
+  vpc_id = "${module.jenkins_vpc.vpc_id}"
 }
 
 module "jenkins_vpc" {
@@ -22,7 +22,7 @@ module "jenkins_vpc" {
   enable_vpn_gateway = true
 
   tags = {
-    Launched = "${local.timestamp}"
+    Launched = "${timestamp()}"
     Terraform = "true"
     Environment = "dev"
   }
