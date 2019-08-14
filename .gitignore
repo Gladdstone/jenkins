@@ -1,4 +1,4 @@
 CentOS/variables.json
 terraform/.terraform
-terraform/terraform.tfstate
-terraform/terraform.tfstate.backup
+terraform.tfstate
+terraform.tfstate.backup
