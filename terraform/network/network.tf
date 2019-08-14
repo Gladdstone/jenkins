@@ -2,9 +2,26 @@ provider "aws" {
   region = "us-east-1"
 }
 
-data "aws_security_group" "jenkins_sg" {
-  name   = "default"
-  vpc_id = "${module.jenkins_vpc.vpc_id}"
+module "jenkins_sg" {
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "2.17.0"
+
+  name        = "jenkins-sg"
+  description = "Security group for Jenkins"
+  vpc_id      = "${module.jenkins_vpc.vpc_id}"
+  egress_rules = ["all-all"]
+
+  ingress_cidr_blocks = ["10.10.0.0/16"]
+
+  ingress_with_cidr_blocks = [
+    {
+      from_port   = 8080
+      to_port     = 8080
+      protocol    = "tcp"
+      description = "User-service ports"
+      cidr_blocks = "10.10.0.0/16"
+    }
+  ]
 }
 
 module "jenkins_vpc" {
@@ -20,6 +37,10 @@ module "jenkins_vpc" {
 
   enable_nat_gateway = true
   enable_vpn_gateway = true
+
+  enable_ec2_endpoint              = true
+  ec2_endpoint_private_dns_enabled = true
+  ec2_endpoint_security_group_ids  = ["${aws_security_group.jenkins_sg.this_security_group_id}"]
 
   tags = {
     Launched = "${timestamp()}"
