@@ -53,13 +53,13 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "jenkins-attach" {
-  role       = "${aws_iam_role.jenkins.name}"
-  policy_arn = "${aws_iam_policy.jenkins.arn}"
+  role       = aws_iam_role.jenkins.name
+  policy_arn = aws_iam_policy.jenkins.arn
 }
 
 resource "aws_iam_instance_profile" "jenkins-profile" {
   name = "jenkins-profile"
-  role = "${aws_iam_role.jenkins.name}"
+  role = aws_iam_role.jenkins.name
 }
 
 module "jenkins" {
@@ -69,12 +69,12 @@ module "jenkins" {
   name                   = "jenkins"
   instance_count         = 1
 
-  ami                    = "${data.aws_ami.jenkins_ami.id}"
+  ami                    = data.aws_ami.jenkins_ami.id
   instance_type          = "t2.micro"
   key_name               = "joefarrell"
   monitoring             = false
-  vpc_security_group_ids = ["${module.sg.jenkins_sg_id}"]
-  subnet_id              = "${module.network.jenkins_private_subnets[0]}"
+  vpc_security_group_ids = [module.sg.jenkins_sg_id]
+  subnet_id              = module.network.jenkins_subnet
 
   tags = {
     Terraform   = "true"
